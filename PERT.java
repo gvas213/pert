@@ -18,6 +18,7 @@ import java.util.Scanner;
 
 public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
     LinkedList<Vertex> finishList;
+	LinkedList<Vertex> reverseTO;
 	
     public static class PERTVertex implements Factory {
 		// Add fields to represent attributes of vertices here
@@ -50,6 +51,22 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
     private PERT(Graph g) {
 		super(g, new PERTVertex(null));
     }
+
+	//method to reverse a linked list
+	public void reverse() {
+		Vertex prev = null;
+		Vertex current = head;
+		Vertex next = null;
+
+		while(current != null) {
+			next = current.next;
+			current.next = prev;
+			prev = current;
+			current = next;
+		}
+
+		head = prev;
+	}
 
 	//verify that the graph is a DAG
 	public void isDag(Vertex u) {
@@ -116,8 +133,58 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
     }
 
     // Implement the PERT algorithm. Returns false if the graph g is not a DAG.
-    public boolean pert() {
-		return false;
+    public boolean pert(Graph g, int[] duration) {
+
+		//verify the graph is a DAG
+		if(!dagALL(g)) {
+			return false;
+		}
+
+		dfsAll(g);	//run dfs to store the topological order in finishList;
+
+		for(Vertex u : g) {
+			u.es = 0;
+		}
+
+		//iterate through nodes to assign dependencies
+		for(Vertex u : finishList) {
+			u.ef = u.es + u.dur;
+
+			//find the earliest start time for the next vertices
+			//ensures that it doesn't start before the dependency finishes
+			for(Edge e : u.otherEnd(v)) {
+				if(v.es < u.ef) {	
+					v.es = u.ef;
+				}
+			}
+		}
+
+		int completionTime = max{u.ef};		//find the project completion time (max of earliest finish times)
+		reverseTO = finishList.reverse();
+
+		
+
+		for(Vertex u : g) {
+			u.lf = completionTime;
+		}
+
+		for(Vertex u : reverseTO) {
+			u.ls = u.lf - u.dur;
+			u.slack = u.lf - u.ef;
+
+			for(Edge e : u.otherEnd(v)) {
+				if(v.lf > u.ls) {
+					v.lf = u.ls;
+				}
+			}
+		}
+
+		for(Vertex u : g) {
+			if (u.slack == 0) {
+				u.critical = true;
+			}
+		}
+
     }
 
     // Find a topological order of g using DFS
