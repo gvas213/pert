@@ -20,29 +20,109 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex> {
     LinkedList<Vertex> finishList;
 	
     public static class PERTVertex implements Factory {
-	// Add fields to represent attributes of vertices here
+		// Add fields to represent attributes of vertices here
+		int dur;
+		int ec;
+		int ef;
+		int ls;
+		int lf;
+		int slack;
+		Vertex parent;
+		boolean critical;
+		boolean status = false;
 	
 	public PERTVertex(Vertex u) {
+		u.ec = 0;
+		u.ef = 0;
+		u.ls = 0;
+		u.lf = 0;
+		u.slack = 0;
+		u.parent = null;
+		u.critical = false;
 	}
+
+
 	public PERTVertex make(Vertex u) { return new PERTVertex(u); }
+
     }
 
     // Constructor for PERT is private. Create PERT instances with static method pert().
     private PERT(Graph g) {
-	super(g, new PERTVertex(null));
+		super(g, new PERTVertex(null));
     }
 
+	//verify that the graph is a DAG
+	public void isDag(Vertex u) {
+		u.status = true;	//entered node so set status to true (seen)
+		for(Edge e : u.otherEnd(v)) {	//for every edge incident to u continue verifying DAG
+			if(v.status) {
+				return false;
+			}else if(!isDag(v)) {
+				return false;
+			}
+		}
+
+		return true;	//verified DAG
+	}
+
+	//ensures that all nodes are visited to verify DAG
+	public void dagAll(Graph g) {
+		for(Vertex u : g) {
+			u.status = false;
+		}
+
+		for(Vertex u : g) {
+			if(u.status == false) {
+				if(!isDag(u)) {	
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	//DFS algorithm for Topological order
+	public void dfs(Vertex u) {
+		u.status = true;
+		for(Edge e : u.otherEnd(v)) {
+			if(!v.status) {
+				v.parent = u;
+				dfs(v);
+			}
+		}
+
+		finishList.addFirst(u);
+	}
+
+	//wrapper DFS method
+	public void dfsAll(Graph g) {
+		for(Vertex u : g) {		//initialize attributes of u
+			u.status = false;
+			u.parent = null;
+		}
+
+		for(Vertex u : g) {
+			if(!v.status) {		//if u hasn't been visited, run DFS
+				dfs(u);
+			}
+		}
+	}
+
+
+	//set duration by node (length of time taken to complete task)
     public void setDuration(Vertex u, int d) {
+		u.dur = d;
     }
 
     // Implement the PERT algorithm. Returns false if the graph g is not a DAG.
     public boolean pert() {
-	return false;
+		return false;
     }
 
     // Find a topological order of g using DFS
     LinkedList<Vertex> topologicalOrder() {
-	return finishList;
+		return finishList;
     }
 
 
