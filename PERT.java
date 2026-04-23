@@ -3,14 +3,14 @@
  */
 
 // change to your netid
-package sxa173731;
+package netid;
 
-// replace sxa173731 with your netid below
-import sxa173731.Graph;
-import sxa173731.Graph.Vertex;
-import sxa173731.Graph.Edge;
-import sxa173731.Graph.GraphAlgorithm;
-import sxa173731.Graph.Factory;
+// replace with your netid below
+import netid.Graph;
+import netid.Graph.Vertex;
+import netid.Graph.Edge;
+import netid.Graph.GraphAlgorithm;
+import netid.Graph.Factory;
 
 import java.io.File;
 import java.util.LinkedList;
