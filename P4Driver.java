@@ -1,8 +1,6 @@
 /* Driver code for PERT algorithm (Project 4)
  * @author rbk
  */
-// Change to your netid
-package sxa173731;
 
 import java.util.Scanner;
 
