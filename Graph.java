@@ -4,7 +4,7 @@
  * 2018/11/06
  */
 // change package name to your netid
-package gxx230006;
+package netid;
 
 import java.util.HashMap;
 import java.util.Iterator;
